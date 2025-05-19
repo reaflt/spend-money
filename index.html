@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .welcome-screen {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            margin: 100px auto;
+            text-align: center;
+        }
+        
+        .welcome-screen h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .welcome-screen p {
+            margin-bottom: 30px;
+            color: #7f8c8d;
+        }
+        
+        .welcome-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        input {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .greeting-screen {
+            display: none;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+        }
+        
+        .greeting-screen h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .main-app {
+            display: none;
+        }
+        
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .balance-section {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .balance-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .balance-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .balance-amount.spending {
+            color: #e74c3c;
+        }
+        
+        .filter-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .category-btn {
+            padding: 8px 15px;
+            background-color: #f1f2f6;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .product-price {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .product-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+        
+        .quantity {
+            width: 60px;
+            text-align: center;
+        }
+        
+        .buy-btn {
+            flex: 1;
+        }
+        
+        .sell-btn {
+            flex: 1;
+            background-color: #e74c3c;
+        }
+        
+        .sell-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .owned-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .page-btn {
+            padding: 8px 15px;
+            background-color: #f1f2f6;
+            border: none;
+            border-radius: 6px;
+        }
+        
+        .page-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .balance-section {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .product-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>$8 Trillion Shopping Experience</h1>
+            <p>Ever wondered what you could buy with $8,000,000,000,000? Let's find out!</p>
+            <div class="welcome-form">
+                <input type="text" id="nameInput" placeholder="Enter your name" required>
+                <input type="number" id="ageInput" placeholder="Enter your age" min="1" max="120" required>
+                <button id="startBtn">Let's Begin</button>
+            </div>
+        </div>
+
+        <!-- Greeting Screen -->
+        <div class="greeting-screen" id="greetingScreen">
+            <h1>Welcome, <span id="userNameDisplay"></span>!</h1>
+            <p id="greetingMessage"></p>
+            <button id="continueBtn">Start Shopping</button>
+        </div>
+
+        <!-- Main Application -->
+        <div class="main-app" id="mainApp">
+            <div class="header">
+                <h1>Your $8 Trillion Shopping Spree</h1>
+            </div>
+
+            <div class="balance-section">
+                <div class="balance-box">
+                    <div class="balance-label">Remaining Balance</div>
+                    <div class="balance-amount" id="remainingBalance">$8,000,000,000,000.00</div>
+                </div>
+                <div class="balance-box">
+                    <div class="balance-label">Amount Spent</div>
+                    <div class="balance-amount spending" id="amountSpent">$0.00</div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search items...">
+                    <button id="searchBtn">Search</button>
+                </div>
+                <div class="categories" id="categories">
+                    <button class="category-btn active" data-category="all">All Items</button>
+                    <button class="category-btn" data-category="everyday">Everyday Items</button>
+                    <button class="category-btn" data-category="tech">Technology</button>
+                    <button class="category-btn" data-category="luxury">Luxury</button>
+                    <button class="category-btn" data-category="realestate">Real Estate</button>
+                    <button class="category-btn" data-category="megaprojects">Mega Projects</button>
+                    <button class="category-btn" data-category="food">Food & Drink</button>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be dynamically generated here -->
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be dynamically generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        const TOTAL_BUDGET = 8000000000000; // $8 trillion
+        let remainingBudget = TOTAL_BUDGET;
+        let amountSpent = 0;
+        let inventory = {};
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let filteredProducts = [];
+        
+        // Product database
+        const products = [
+            { name: "Rubber band", price: 0.01, category: "everyday" },
+            { name: "Paperclip", price: 0.02, category: "everyday" },
+            { name: "Plastic bottle cap", price: 0.05, category: "everyday" },
+            { name: "Domestic postage stamp (US)", price: 0.10, category: "everyday" },
+            { name: "Single matchstick", price: 0.15, category: "everyday" },
+            { name: "Cotton swab (one)", price: 0.20, category: "everyday" },
+            { name: "Plastic drinking straw", price: 0.25, category: "everyday" },
+            { name: "Wooden pencil", price: 0.50, category: "everyday" },
+            { name: "Eraser", price: 0.75, category: "everyday" },
+            { name: "Ballpoint pen", price: 1.00, category: "everyday" },
+            { name: "600 ml bottled water", price: 1.50, category: "food" },
+            { name: "Cup of coffee at a street stall", price: 2.00, category: "food" },
+            { name: "Chocolate bar", price: 3.00, category: "food" },
+            { name: "Loaf of white bread", price: 5.00, category: "food" },
+            { name: "Basic T‑shirt", price: 7.00, category: "everyday" },
+            { name: "Paperback book", price: 10.00, category: "everyday" },
+            { name: "Fast‑food combo meal", price: 12.00, category: "food" },
+            { name: "Basic fleece hoodie", price: 15.00, category: "everyday" },
+            { name: "Matinée movie ticket", price: 20.00, category: "everyday" },
+            { name: "Pair of socks", price: 22.00, category: "everyday" },
+            { name: "Budget in‑ear headphones", price: 25.00, category: "tech" },
+            { name: "Stainless‑steel kitchen knife", price: 30.00, category: "everyday" },
+            { name: "Entry‑level smartwatch", price: 50.00, category: "tech" },
+            { name: "Mid‑range over‑ear headphones", price: 75.00, category: "tech" },
+            { name: "Casual dinner for two", price: 80.00, category: "food" },
+            { name: "Cordless power drill", price: 100.00, category: "everyday" },
+            { name: "Entry‑level DSLR camera body", price: 250.00, category: "tech" },
+            { name: "Inflatable kayak", price: 300.00, category: "everyday" },
+            { name: "Entry‑level electric scooter", price: 400.00, category: "tech" },
+            { name: "Mid‑range tablet", price: 500.00, category: "tech" },
+            { name: "Mid‑range smartphone", price: 600.00, category: "tech" },
+            { name: "Chromebook laptop", price: 700.00, category: "tech" },
+            { name: "Full‑frame mirrorless camera body", price: 1000.00, category: "tech" },
+            { name: "Game console + bundle", price: 1200.00, category: "tech" },
+            { name: "Entry‑level gaming laptop", price: 1500.00, category: "tech" },
+            { name: "Entry‑level mechanical watch (Seiko 5)", price: 2000.00, category: "luxury" },
+            { name: "New automatic scooter (125 cc)", price: 2500.00, category: "everyday" },
+            { name: "Electric bicycle", price: 3000.00, category: "tech" },
+            { name: "4‑seat dining table set", price: 4000.00, category: "everyday" },
+            { name: "Small sailing dinghy", price: 5000.00, category: "luxury" },
+            { name: "Standard upright piano", price: 6000.00, category: "luxury" },
+            { name: "3‑seater sofa", price: 7000.00, category: "everyday" },
+            { name: "Rolex Oyster Perpetual entry‑model", price: 8000.00, category: "luxury" },
+            { name: "Small diamond ring (0.5 ct)", price: 10000.00, category: "luxury" },
+            { name: "Professional DSLR + kit lens", price: 12000.00, category: "tech" },
+            { name: "Used compact car", price: 15000.00, category: "everyday" },
+            { name: "New 600 cc sport motorcycle", price: 18000.00, category: "luxury" },
+            { name: "Used Tesla Model 3", price: 20000.00, category: "tech" },
+            { name: "New subcompact car", price: 22000.00, category: "everyday" },
+            { name: "Professional mountain bike", price: 25000.00, category: "luxury" },
+            { name: "Yacht tender (small support craft)", price: 30000.00, category: "luxury" },
+            { name: "New hatchback", price: 35000.00, category: "everyday" },
+            { name: "Used Mercedes‑Benz C‑Class", price: 40000.00, category: "luxury" },
+            { name: "Used Porsche Cayman", price: 50000.00, category: "luxury" },
+            { name: "New mid‑size SUV", price: 60000.00, category: "everyday" },
+            { name: "Chevrolet Corvette C8", price: 70000.00, category: "luxury" },
+            { name: "Tesla Model 3 Performance", price: 80000.00, category: "tech" },
+            { name: "Mid‑range motorhome", price: 90000.00, category: "luxury" },
+            { name: "Used McLaren 570S", price: 100000.00, category: "luxury" },
+            { name: "1 BR house in a small US town", price: 120000.00, category: "realestate" },
+            { name: "1 BR apartment in a developing capital city", price: 150000.00, category: "realestate" },
+            { name: "Average single‑family US home", price: 200000.00, category: "realestate" },
+            { name: "Uninhabited small island", price: 250000.00, category: "realestate" },
+            { name: "Studio‐style penthouse condo", price: 300000.00, category: "realestate" },
+            { name: "Minority stake in a local football club", price: 350000.00, category: "luxury" },
+            { name: "Beachfront villa", price: 400000.00, category: "realestate" },
+            { name: "Small private island", price: 500000.00, category: "realestate" },
+            { name: "Lakefront mansion", price: 600000.00, category: "realestate" },
+            { name: "Rare stamp collection", price: 750000.00, category: "luxury" },
+            { name: "Entry‑level Patek Philippe watch", price: 1000000.00, category: "luxury" },
+            { name: "Single‑story luxury home in a major city", price: 1200000.00, category: "realestate" },
+            { name: "Contemporary fine‑art painting", price: 1500000.00, category: "luxury" },
+            { name: "Classic Ferrari 250 Europa", price: 2000000.00, category: "luxury" },
+            { name: "Cessna Citation Mustang light jet", price: 2500000.00, category: "luxury" },
+            { name: "Gold coin collection", price: 3000000.00, category: "luxury" },
+            { name: "Antique warship anchor", price: 4000000.00, category: "luxury" },
+            { name: "50‑ft yacht", price: 5000000.00, category: "luxury" },
+            { name: "Luxury California estate", price: 6000000.00, category: "realestate" },
+            { name: "Early Picasso painting", price: 7000000.00, category: "luxury" },
+            { name: "Minor League Baseball team", price: 8000000.00, category: "luxury" },
+            { name: "Private mini‑submarine", price: 9000000.00, category: "luxury" },
+            { name: "One‑off prototype supercar", price: 10000000.00, category: "luxury" },
+            { name: "Used Formula 1 racecar", price: 12000000.00, category: "luxury" },
+            { name: "Small boutique hotel", price: 15000000.00, category: "realestate" },
+            { name: "Five‑story commercial property", price: 20000000.00, category: "realestate" },
+            { name: "Lower‑division pro soccer club", price: 25000000.00, category: "luxury" },
+            { name: "Rare LaFerrari", price: 30000000.00, category: "luxury" },
+            { name: "Gulfstream G150 mid‑size jet", price: 35000000.00, category: "luxury" },
+            { name: "Malibu beachfront mansion", price: 40000000.00, category: "realestate" },
+            { name: "100‑ft yacht", price: 50000000.00, category: "luxury" },
+            { name: "Secluded Caribbean estate", price: 60000000.00, category: "realestate" },
+            { name: "Local soccer stadium", price: 75000000.00, category: "realestate" },
+            { name: "Minor League hockey franchise", price: 90000000.00, category: "luxury" },
+            { name: "Rembrandt masterpiece", price: 200000000.00, category: "luxury" },
+            { name: "Ultra‑luxury superyacht", price: 250000000.00, category: "luxury" },
+            { name: "Ten‑story office tower in a mid‑sized city", price: 300000000.00, category: "realestate" },
+            { name: "Big‐budget Hollywood blockbuster production", price: 350000000.00, category: "luxury" },
+            { name: "Small data center", price: 400000000.00, category: "tech" },
+            { name: "Airbus A380 (per unit sale price)", price: 445000000.00, category: "luxury" },
+            { name: "Geostationary communications satellite", price: 500000000.00, category: "tech" },
+            { name: "Superyacht (mega‑yacht)", price: 600000000.00, category: "luxury" },
+            { name: "Private small hospital", price: 800000000.00, category: "realestate" },
+            { name: "Modern NFL stadium", price: 1500000000.00, category: "realestate" },
+            { name: "B‑2 Spirit stealth bomber", price: 2100000000.00, category: "luxury" },
+            { name: "200‑ft superyacht", price: 3000000000.00, category: "luxury" },
+            { name: "National air‐defense missile system", price: 5000000000.00, category: "megaprojects" },
+            { name: "Nuclear power plant", price: 6000000000.00, category: "megaprojects" },
+            { name: "Mid‑span suspension bridge", price: 8300000000.00, category: "megaprojects" },
+            { name: "20 km private toll road", price: 10000000000.00, category: "megaprojects" },
+            { name: "Nimitz‑class aircraft carrier", price: 13000000000.00, category: "megaprojects" },
+            { name: "Medium‐city metro rail project", price: 14000000000.00, category: "megaprojects" },
+            { name: "New regional airport", price: 15000000000.00, category: "megaprojects" },
+            { name: "Large LNG export terminal", price: 25000000000.00, category: "megaprojects" },
+            { name: "Commercial spacecraft", price: 50000000000.00, category: "megaprojects" },
+            { name: "National satellite launch program", price: 60000000000.00, category: "megaprojects" },
+            { name: "Integrated missile defense network", price: 80000000000.00, category: "megaprojects" },
+            { name: "Mega hydroelectric dam", price: 90000000000.00, category: "megaprojects" },
+            { name: "Undersea high‑speed rail tunnel", price: 100000000000.00, category: "megaprojects" },
+            { name: "Transnational high‑speed rail corridor", price: 120000000000.00, category: "megaprojects" },
+            { name: "International Space Station (ISS)", price: 150000000000.00, category: "megaprojects" },
+            { name: "Pack of potato chips", price: 1.50, category: "food" },
+            { name: "Candy bar (artisan)", price: 2.50, category: "food" },
+            { name: "Large latte at a specialty café", price: 4.50, category: "food" },
+            { name: "Gourmet cupcake", price: 5.00, category: "food" },
+            { name: "Artisanal loaf of sourdough", price: 6.00, category: "food" },
+            { name: "Premium Thai tea (glass)", price: 7.00, category: "food" },
+            { name: "Craft beer (bottle)", price: 8.00, category: "food" },
+            { name: "Glass of mid‑range red wine", price: 10.00, category: "food" },
+            { name: "Sushi roll set (6 pieces)", price: 12.00, category: "food" },
+            { name: "Middle‑eastern mezze platter", price: 15.00, category: "food" },
+            { name: "Bottle of quality olive oil", price: 20.00, category: "food" },
+            { name: "Box of luxury chocolates (16 pcs)", price: 25.00, category: "food" },
+            { name: "French macarons (box of 12)", price: 30.00, category: "food" },
+            { name: "Premium loose‑leaf tea tin", price: 35.00, category: "food" },
+            { name: "Gourmet cheese board for two", price: 40.00, category: "food" },
+            { name: "Bottle of mid‑tier champagne", price: 50.00, category: "food" },
+            { name: "Top‑shelf single‑malt whisky (750 ml)", price: 70.00, category: "food" },
+            { name: "Small tin of premium caviar", price: 100.00, category: "food" },
+            { name: "Organic extra‑virgin olive oil liter", price: 120.00, category: "food" },
+            { name: "Jar of white truffles (30 g)", price: 200.00, category: "food" },
+            { name: "Omakase sushi dinner per person", price: 250.00, category: "food" },
+            { name: "Exclusive wine auction lot (6 bottles)", price: 500.00, category: "food" },
+            { name: "Vintage Champagne Magnum (1.5 L)", price: 1000.00, category: "food" },
+            { name: "Rare Bordeaux (bottle)", price: 2000.00, category: "food" },
+            { name: "Fine aged Kobe beef steak (1 kg)", price: 3000.00, category: "food" },
+            { name: "High‑end whisky vertical set (3 bottles)", price: 5000.00, category: "food" },
+            { name: "Premium wine cellar collection (12 bottles)", price: 10000.00, category: "food" },
+            { name: "Exclusive chef's tasting menu (for 2)", price: 20000.00, category: "food" },
+            { name: "One‑year private wine club membership", price: 50000.00, category: "food" },
+            { name: "Ultra‑rare Romanée‑Conti bottling", price: 100000.00, category: "food" },
+            { name: "Imperial caviar service (2 kg)", price: 150000.00, category: "food" },
+            { name: "Luxury dining club franchise", price: 200000.00, category: "food" },
+            { name: "Private truffle‐hunting tour (group)", price: 250000.00, category: "food" },
+            { name: "NFT‐backed gourmet food experience", price: 300000.00, category: "food" },
+            { name: "Lifetime pass to Michelin‑starred restaurants", price: 500000.00, category: "food" },
+            { name: "Floating vineyards project investment", price: 1000000.00, category: "food" },
+            { name: "Fully staffed private chef service (1 year)", price: 2000000.00, category: "food" },
+            { name: "Edible gold leaf art installation", price: 5000000.00, category: "food" },
+            { name: "Space agriculture crop module (for orbit)", price: 10000000.00, category: "food" },
+            { name: "Self‑sustaining lunar greenhouse unit", price: 50000000.00, category: "food" },
+        ];
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+        
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start button click event
+            document.getElementById('startBtn').addEventListener('click', function() {
+                const name = document.getElementById('nameInput').value.trim();
+                const age = document.getElementById('ageInput').value.trim();
+                
+                if (name === '' || age === '') {
+                    alert('Please enter both your name and age to continue.');
+                    return;
+                }
+                
+                // Show greeting screen with personalized message
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('greetingScreen').style.display = 'block';
+                document.getElementById('userNameDisplay').textContent = name;
+                
+                // Create personalized greeting based on age
+                let greetingMessage = '';
+                const ageNum = parseInt(age);
+                
+                if (ageNum < 18) {
+                    greetingMessage = `Welcome to the world of extreme wealth, ${name}! At ${age}, you now have $8 trillion to spend however you want - that's more money than most countries have! Let's see what you'll buy with this incredible fortune.`;
+                } else if (ageNum < 30) {
+                    greetingMessage = `Hello ${name}! Imagine having $8 trillion in your bank account - that's about 40 times what the richest person on Earth is worth! As a ${age}-year-old, what would you prioritize? Freedom to explore? World-changing investments? Let's find out!`;
+                } else if (ageNum < 50) {
+                    greetingMessage = `Welcome, ${name}! With $8 trillion at your disposal, you could reshape entire industries or solve global challenges. At ${age}, your perspective is valuable - will you focus on luxury, innovative projects, or perhaps changing the world? The choice is yours!`;
+                } else {
+                    greetingMessage = `${name}, with your wisdom and life experience at ${age}, imagine the impact you could make with $8 trillion. From simple pleasures to world-changing mega-projects, we're excited to see how you'll spend this immense fortune!`;
+                }
+                
+                document.getElementById('greetingMessage').textContent = greetingMessage;
+            });
+            
+            // Continue button click event
+            document.getElementById('continueBtn').addEventListener('click', function() {
+                document.getElementById('greetingScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Initialize the main application
+                initializeApp();
+            });
+            
+            // Search button click event
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                filterProducts();
+            });
+            
+            // Search input enter key
+            document.getElementById('searchInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    filterProducts();
+                }
+            });
+            
+            // Category buttons click events
+            document.querySelectorAll('.category-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    // Remove active class from all category buttons
+                    document.querySelectorAll('.category-btn').forEach(function(btn) {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter products
+                    filterProducts();
+                });
+            });
+        });
+        
+        // Initialize the main application
+        function initializeApp() {
+            filterProducts();
+            updateBalance();
+        }
+        
+        // Filter products based on search and category
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+            
+            filteredProducts = products.filter(function(product) {
+                // Filter by category
+                if (activeCategory !== 'all' && product.category !== activeCategory) {
+                    return false;
+                }
+                
+                // Filter by search term
+                if (searchTerm && !product.name.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Reset to first page
+            currentPage = 1;
+            
+            // Display the filtered products
+            displayProducts();
+            updatePagination();
+        }
+        
+        // Display products for the current page
+        function displayProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = '';
+            
+            // Calculate start and end index for pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length);
+            
+            // Get current page products
+            const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            if (currentPageProducts.length === 0) {
+                productsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px;">No products found matching your criteria.</div>';
+                return;
+            }
+            
+            // Create product cards
+            currentPageProducts.forEach(function(product) {
+                const owned = inventory[product.name] || 0;
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">${formatCurrency(product.price)}</div>
+                    <div class="product-controls">
+                        <input type="number" class="quantity" min="1" value="1">
+                        <button class="buy-btn" data-name="${product.name}" data-price="${product.price}">Buy</button>
+                        <button class="sell-btn" data-name="${product.name}" data-price="${product.price}" ${owned === 0 ? 'disabled' : ''}>Sell</button>
+                    </div>
+                    <div class="owned-info">You own: <span class="owned-count">${owned}</span></div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+                
+                // Add event listeners to buy and sell buttons
+                const buyBtn = productCard.querySelector('.buy-btn');
+                const sellBtn = productCard.querySelector('.sell-btn');
+                const quantityInput = productCard.querySelector('.quantity');
+                
+                buyBtn.addEventListener('click', function() {
+                    const quantity = parseInt(quantityInput.value) || 1;
+                    buyProduct(this.dataset.name, parseFloat(this.dataset.price), quantity);
+                });
+                
+                sellBtn.addEventListener('click', function() {
+                    const quantity = parseInt(quantityInput.value) || 1;
+                    sellProduct(this.dataset.name, parseFloat(this.dataset.price), quantity);
+                });
+            });
+        }
+        
+        // Update pagination controls
+        function updatePagination() {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+            
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                return; // No need for pagination
+            }
+            
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.textContent = '←';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayProducts();
+                    updatePagination();
+                }
+            });
+            paginationContainer.appendChild(prevBtn);
+            
+            // Page number buttons (show max 5 pages with ellipsis if needed)
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = 'page-btn';
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', function() {
+                    currentPage = i;
+                    displayProducts();
+                    updatePagination();
+                });
+                paginationContainer.appendChild(pageBtn);
+            }
+            
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.textContent = '→';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayProducts();
+                    updatePagination();
+                }
+            });
+            paginationContainer.appendChild(nextBtn);
+        }
+        
+        // Buy a product
+        function buyProduct(name, price, quantity) {
+            const totalCost = price * quantity;
+            
+            if (totalCost > remainingBudget) {
+                alert("You don't have enough money for this purchase!");
+                return;
+            }
+            
+            // Update budget
+            remainingBudget -= totalCost;
+            amountSpent += totalCost;
+            
+            // Update inventory
+            inventory[name] = (inventory[name] || 0) + quantity;
+            
+            // Update UI
+            updateBalance();
+            updateInventoryDisplay();
+        }
+        
+        // Sell a product
+        function sellProduct(name, price, quantity) {
+            if (!inventory[name] || inventory[name] < quantity) {
+                alert(`You don't have ${quantity} ${name}(s) to sell!`);
+                return;
+            }
+            
+            // Update budget
+            remainingBudget += price * quantity;
+            amountSpent -= price * quantity;
+            
+            // Update inventory
+            inventory[name] -= quantity;
+            
+            // Update UI
+            updateBalance();
+            updateInventoryDisplay();
+        }
+        
+        // Update balance display
+        function updateBalance() {
+            document.getElementById('remainingBalance').textContent = formatCurrency(remainingBudget);
+            document.getElementById('amountSpent').textContent = formatCurrency(amountSpent);
+        }
+        
+        // Update inventory display
+        function updateInventoryDisplay() {
+            document.querySelectorAll('.product-card').forEach(function(card) {
+                const productName = card.querySelector('.buy-btn').dataset.name;
+                const ownedCount = inventory[productName] || 0;
+                
+                // Update owned count
+                card.querySelector('.owned-count').textContent = ownedCount;
+                
+                // Enable/disable sell button
+                const sellBtn = card.querySelector('.sell-btn');
+                if (ownedCount > 0) {
+                    sellBtn.removeAttribute('disabled');
+                } else {
+                    sellBtn.setAttribute('disabled', 'disabled');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
