@@ -1,4 +1,4 @@
-## spend-money
+## SPEND Money APP
 
 A fun, interactive web application that lets users imagine spending an \$8 trillion budget on various items—from everyday goods to mega‑projects. Built with vanilla HTML, CSS, and JavaScript.
 
